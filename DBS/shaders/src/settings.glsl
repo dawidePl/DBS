@@ -1,0 +1,1 @@
+#define RENDER_CLOUDS //Enable/Disable clouds rendering. Enable them on your own responsibility. ( Very ugly )

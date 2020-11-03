@@ -43,6 +43,7 @@ uniform mat4 gbufferModelViewInverse;
 #include "src/shadow.glsl"
 #include "src/phase.glsl"
 #include "src/volumetricFog.glsl"
+#include "src/getPos.glsl"
 
 float lmcurve(in float lmcoord) {
     return 1.0 - abs(lmcoord - 1.5);
@@ -71,20 +72,19 @@ void main() {
     vec3 normal = texture2D(colortex2, texcoord).xyz;
          normal *= 2.0 + 1.0;
     vec4 albedo = texture2D(colortex0, texcoord);
-
-    vec3 screenPos = vec3(texcoord, texture2D(depthtex0, texcoord).r);
-    vec3 clipPos = screenPos * 2.0 - 1.0;
-    vec4 tmp = gbufferProjectionInverse * vec4(clipPos, 1.0);
-    vec3 viewPos = tmp.xyz / tmp.w;
-    vec3 eyePlayerPos = mat3(gbufferModelViewInverse) * viewPos;
-    vec3 feetPlayerPos = eyePlayerPos + gbufferModelViewInverse[3].xyz;
     
     if(texture2D(depthtex0, texcoord).x < 1.0) {
         albedo.rgb = calculateColor(vec4(feetPlayerPos, 1.0), texcoord, albedo.rgb, normal, lmcoord);
 
-        albedo.rgb = getFog(albedo.rgb, vec3(0.0), viewPos);
+        albedo.rgb = getFog(albedo.rgb, vec3(0.0), viewPos, 600.0, true);
     }
 
-    /*DRAWBUFFERS:0*/
+    if(texture2D(depthtex0, texcoord).x == 1.0) {
+        albedo.rgb = getFog(albedo.rgb, vec3(0.0), viewPos, 50.0, true);
+    }
+
+    /*DRAWBUFFERS:012*/
     gl_FragData[0] = albedo;
+    gl_FragData[1] = vec4(lmcoord, 0.0, 1.0);
+    gl_FragData[2] = vec4(normal * 0.5 + 0.5, 1.0);
 }
