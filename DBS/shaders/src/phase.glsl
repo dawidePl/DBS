@@ -14,7 +14,7 @@ float mP(in float theta, in float g) {
 
 float csP(in float theta, in float g) {
     float a = 3.0 * (1.0 - pow(g, 2.0)) * (1.0 + pow(theta, 2.0));
-    float b = 2.0 * pow((2.0 + pow(g, 2.0) * (1.0 + pow(g, 2.0) - 2.0 * g * pow(theta, 2))), 1.5);
+    float b = 2.0 * pow((2.0 + (g * g)) * (1.0 + (g * g) - 2.0 * g * (theta * theta))), 1.5);
 
     return (a * b) / (4.0 * 3.141592);
 }
